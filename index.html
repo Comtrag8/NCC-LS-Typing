@@ -18,47 +18,88 @@
       --warn:#f59e0b;
       --err:#ef4444;
       --shadow:0 10px 20px rgba(17,24,39,.08);
-      --ring:0 0 0 3px rgba(26,163,173,.25);
+      --ring: 0 0 0 3px rgba(26,163,173,.25);
     }
 
-    body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 system-ui}
+    html,body{height:100%}
+    body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 system-ui, -apple-system, Segoe UI, Roboto, Inter, Arial, sans-serif}
     .wrap{max-width:1200px;margin:0 auto;padding:20px}
 
-    header{display:flex;justify-content:space-between;align-items:center;background:linear-gradient(135deg,var(--ncc-purple),var(--ncc-teal));padding:14px 16px;border-radius:16px;color:#fff;box-shadow:var(--shadow)}
-
-    h1{margin:0;font-size:1.25rem;color:#fff}
+    header{display:flex;gap:16px;align-items:center;justify-content:space-between;padding:14px 16px;border-radius:16px;background:linear-gradient(135deg,var(--ncc-purple),var(--ncc-teal));color:var(--ink-contrast);box-shadow:var(--shadow)}
+    h1{font-size:1.25rem;margin:0;color:var(--ink-contrast)}
 
     .grid{display:grid;grid-template-columns:320px 1fr;gap:16px;margin-top:16px}
-    .card{background:var(--surface);border:1px solid var(--border);padding:16px;border-radius:14px;box-shadow:var(--shadow)}
 
-    label{display:block;color:var(--muted);font-size:.9rem;margin-bottom:4px;margin-top:10px}
-    input,select,button{width:100%;padding:10px 12px;border-radius:10px;border:1px solid var(--border);background:var(--surface);box-sizing:border-box;color:var(--ink)}
+    .card{background:var(--surface);border-radius:14px;padding:14px 16px;border:1px solid var(--border);box-shadow:var(--shadow)}
 
-    button.primary{background:linear-gradient(135deg,var(--ncc-purple),var(--ncc-teal));border:0;color:#fff;cursor:pointer}
-    button.ghost{background:transparent;border:1px solid var(--ncc-teal);color:var(--ncc-teal);cursor:pointer}
+    label{display:block;font-size:.9rem;color:var(--muted);margin:8px 0 4px}
 
-    .prompt,.typed{min-height:160px;max-height:220px;overflow:auto;padding:12px;border-radius:12px}
-    .prompt{border:1px solid var(--border);background:var(--surface)}
-    .typed{border:1px dashed var(--border);background:var(--surface)}
+    /* Uniform control widths */
+    select,button,input[type="text"]{
+      display:block;
+      width:100%;
+      padding:10px 12px;
+      border-radius:10px;
+      border:1px solid var(--border);
+      background:var(--surface);
+      color:var(--ink);
+      box-shadow:none;
+      box-sizing:border-box;
+    }
+    select:focus,button:focus,input[type="text"]:focus,.typed:focus{
+      outline:none;
+      box-shadow:var(--ring);
+    }
 
+    button{cursor:pointer;transition:.15s transform ease, .15s box-shadow ease}
+    button:active{transform:translateY(1px)}
+    button.primary{background:linear-gradient(135deg,var(--ncc-purple),var(--ncc-teal));border:0;color:var(--ink-contrast)}
+    button.primary:disabled{opacity:.7}
+    button.ghost{background:transparent;border:1px solid var(--ncc-teal);color:var(--ncc-teal)}
+    button.ghost:hover{box-shadow:0 0 0 3px rgba(26,163,173,.15)}
+    button:disabled{opacity:.6;cursor:not-allowed}
+
+    .row{display:flex;gap:8px;align-items:center}
+
+    .stats{display:flex;gap:12px;flex-wrap:wrap}
+    .stat{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:10px 12px;min-width:120px;text-align:center}
+    .stat small{display:block;color:var(--muted);font-size:.75rem}
+
+    .prompt{user-select:none;white-space:pre-wrap;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:12px;min-height:160px;max-height:220px;overflow:auto}
+    .typed{min-height:160px;max-height:220px;overflow:auto;border-radius:12px;border:1px dashed var(--border);padding:12px;background:var(--surface)}
+
+    .char{padding:1px 0;border-bottom:2px solid transparent}
     .char.correct{color:var(--ok)}
-    .char.incorrect{color:var(--err);border-bottom:2px solid var(--err)}
+    .char.incorrect{color:var(--err);border-bottom-color:var(--err)}
 
-    .stats{display:flex;gap:12px;flex-wrap:wrap;margin-top:12px}
-    .stat{border:1px solid var(--border);padding:10px;border-radius:12px;min-width:120px;text-align:center;background:var(--surface)}
-    .stat small{font-size:.75rem;color:var(--muted)}
+    .controls{display:flex;gap:8px;flex-wrap:wrap}
+    .muted{color:var(--muted)}
 
-    @media(max-width:900px){.grid{grid-template-columns:1fr}}
+    .footer{margin-top:12px;color:var(--muted);font-size:.85rem}
+
+    .table{width:100%;border-collapse:collapse}
+    .table th,.table td{padding:8px;border-bottom:1px solid var(--border);text-align:left;vertical-align:top}
+    .table th{color:var(--muted);font-weight:600}
+    .sub{font-size:.85rem;color:var(--muted)}
+
+    @media (max-width: 1000px){ .grid{grid-template-columns:1fr} }
+
+    @media print{
+      header,.controls,.side,.footer{display:none}
+      body{background:#fff;color:#000}
+      .card{box-shadow:none;border:1px solid #ddd}
+      .prompt,.typed{background:#fff;border-color:#ddd}
+    }
   </style>
 </head>
 <body>
-<div class="wrap">
+<div class="wrap" id="appRoot" role="application" aria-label="Legal Studies Typing Practice">
   <header>
     <h1>NCC • Legal Studies Typing Practice</h1>
   </header>
 
   <div class="grid">
-    <aside class="card">
+    <aside class="card side" aria-label="Settings">
       <label for="studentName">Student name</label>
       <input id="studentName" type="text" placeholder="First Last" />
 
@@ -68,42 +109,53 @@
         <option value="3" selected>3 minutes</option>
       </select>
 
-      <div style="margin:8px 0">
-        <input id="allowBackspace" type="checkbox" checked />
-        <label for="allowBackspace">Allow corrections (Backspace)</label>
+      <div class="row" style="margin-top:8px">
+        <input id="allowBackspace" type="checkbox" checked aria-label="Allow corrections with Backspace" />
+        <label for="allowBackspace" class="muted">Allow corrections (Backspace)</label>
       </div>
 
-      <button id="startBtn" class="primary">Start</button>
-      <button id="resetBtn" class="ghost" style="margin-top:6px">Reset</button>
+      <div style="margin-top:12px" class="controls">
+        <button id="startBtn" class="primary">Start</button>
+        <button id="resetBtn" class="ghost">Reset</button>
+      </div>
 
-      <div class="stats">
+      <div style="margin-top:12px" class="stats" aria-live="polite" aria-atomic="true">
         <div class="stat"><small>Time Left</small><div id="time">3:00</div></div>
         <div class="stat"><small>WPM</small><div id="wpm">0</div></div>
         <div class="stat"><small>Accuracy</small><div id="acc">100%</div></div>
         <div class="stat"><small>Attempts</small><div id="attempts">0</div></div>
       </div>
 
-      <button id="reportBtn" class="ghost" style="margin-top:12px">Generate Report (Print/PDF)</button>
+      <div style="margin-top:12px" class="controls">
+        <button id="reportBtn" class="ghost">Generate Report (Print/PDF)</button>
+      </div>
+
+      <p class="muted footer">
+        Timed tests: <strong>1-minute</strong> or <strong>3-minute</strong>.
+        Run ends automatically at 0. Corrections:
+        <span id="corrState">Allowed</span>.
+        <strong>Data is not saved between visits.</strong>
+      </p>
     </aside>
 
-    <main class="card">
-      <div id="msg" style="color:var(--muted);min-height:20px"></div>
+    <main class="card" aria-label="Typing area">
+      <div id="msg" class="muted" aria-live="polite"></div>
 
-      <label>Prompt</label>
-      <div id="prompt" class="prompt"></div>
+      <label class="muted">Prompt stream</label>
+      <div id="prompt" class="prompt" tabindex="0" aria-readonly="true"></div>
 
-      <label>Type here</label>
-      <div id="typed" class="typed" tabindex="0"></div>
-      <input id="hiddenInput" type="text" style="position:absolute;left:-9999px" autocomplete="off" />
+      <label class="muted">Type here</label>
+      <div id="typed" class="typed" role="textbox" aria-multiline="true" tabindex="0"></div>
+      <input id="hiddenInput" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" style="position:absolute;left:-9999px;top:-9999px" />
 
-      <section class="card" style="margin-top:16px">
-        <h2 style="margin:0 0 8px;font-size:1rem">Practice Progress (Best‑3 averages)</h2>
-        <table style="width:100%;border-collapse:collapse" id="progressTable">
+      <section class="card" style="margin-top:12px">
+        <h2 style="margin:0 0 8px;font-size:1rem">Practice Progress (Best-3 averages, by duration)</h2>
+        <table class="table" id="progressTable">
           <thead>
             <tr>
               <th>Practice</th>
-              <th>1‑Minute</th>
-              <th>3‑Minute</th>
+              <th>1-Minute<br><span class="sub">Avg WPM • Avg Acc • Attempts</span></th>
+              <th>3-Minute<br><span class="sub">Avg WPM • Avg Acc • Attempts</span></th>
             </tr>
           </thead>
           <tbody></tbody>
@@ -115,23 +167,23 @@
 
 <script>
 // ----------------------
-// LEGAL STUDIES TYPING PROMPTS
+// CONFIG: Legal studies scripts (varied prompts)
 // ----------------------
 const SCRIPTS = [
   "A legal assistant supports attorneys by preparing documents, organizing case files, and maintaining communication with clients and courts.",
   "Confidentiality is essential in legal settings; information shared by a client must not be disclosed without authorization.",
-  "Accurate record‑keeping ensures compliance with deadlines, court rules, and proper filing procedures.",
+  "Accurate record-keeping ensures compliance with deadlines, court rules, and proper filing procedures.",
   "A subpoena is a formal document that orders a person to appear in court or produce requested documents.",
   "Legal research involves locating statutes, case law, and administrative regulations relevant to a client’s issue.",
   "Professional communication requires clear, concise writing free of ambiguity, bias, or unnecessary commentary.",
   "Proofreading legal documents prevents errors that could impact a case, delay proceedings, or create liability.",
-  "Client intake forms gather essential information, including contact details, case background, and conflict‑check data.",
+  "Client intake forms gather essential information, including contact details, case background, and conflict-check data.",
   "Calendaring systems track deadlines such as hearings, discovery cutoffs, statutes of limitation, and filing dates.",
   "A retainer agreement outlines the scope of representation, fee structure, and responsibilities of both attorney and client.",
   "Discovery may include interrogatories, depositions, and requests for production of documents.",
   "Proper citation format allows courts and attorneys to verify sources and evaluate the authority of legal arguments.",
   "Legal assistants must understand court hierarchy to determine which decisions are binding or persuasive authority.",
-  "E‑filing portals require correct document naming, formatting, and adherence to jurisdiction‑specific rules.",
+  "E-filing portals require correct document naming, formatting, and adherence to jurisdiction-specific rules.",
   "Maintaining professionalism includes punctuality, confidentiality, and respectful communication with all parties.",
   "Timekeeping entries must be accurate and detailed, documenting tasks completed and time spent on each activity.",
   "Litigation support often involves organizing exhibits, preparing trial binders, and managing document production.",
@@ -140,49 +192,330 @@ const SCRIPTS = [
   "Ethical rules prohibit giving legal advice unless one is a licensed attorney; legal assistants may provide information but not counsel."
 ];
 
+// Targets (informational)
 const GOAL_WPM = 45;
 const GOAL_ACC = 95;
 
-let state = {running:false,paused:false,startTime:0,lastKeyTs:0,idleCutoffMs:5000,durationMin:3,promptStream:"",typed:"",scriptIndex:-1,ticker:null};
+// State (session-only)
+let state = {
+  running:false,
+  paused:false,
+  startTime:0,
+  lastKeyTs:0,
+  idleCutoffMs:5000,
+  durationMin:3, // 1 or 3
+  promptStream:"",
+  typed:"",
+  attemptId:null,
+  ticker:null,
+  scriptIndex:-1
+};
+
+// Session-only data (no persistence across page loads)
 let sessionAttempts = [];
 
-const el = id => document.getElementById(id);
+// DOM refs
+const el = id=>document.getElementById(id);
 const durationSel = el('duration');
-const allowBackspace = el('allowBackspace');
+const allowBackspaceEl = el('allowBackspace');
+const corrStateEl = el('corrState');
 const promptEl = el('prompt');
 const typedEl = el('typed');
 const hiddenInput = el('hiddenInput');
+const msgEl = el('msg');
+const studentNameEl = el('studentName');
 
-function nextScriptIndex(){ state.scriptIndex = (state.scriptIndex + 1) % SCRIPTS.length; return state.scriptIndex; }
+// Rotation across scripts
+function nextScriptIndex(){
+  if(SCRIPTS.length===0) return -1;
+  state.scriptIndex = (state.scriptIndex + 1) % SCRIPTS.length;
+  return state.scriptIndex;
+}
 
-function buildInitialStream(){ state.promptStream = SCRIPTS[nextScriptIndex()]; while(state.promptStream.length < 3000){ extendPromptStream(); } }
-function extendPromptStream(){ state.promptStream += " " + SCRIPTS[Math.floor(Math.random()*SCRIPTS.length)]; }
+// Prevent paste
+[typedEl, hiddenInput].forEach(n=>{ n.addEventListener('paste', e=>e.preventDefault()); });
 
-function renderPrompt(){ promptEl.innerHTML = state.promptStream.split('').map(c=>`<span class='char'>${c}</span>`).join(''); }
-function renderTyping(){ typedEl.textContent = state.typed; const chars = promptEl.children; for(let i=0;i<chars.length;i++){ chars[i].classList.remove('correct','incorrect'); if(i < state.typed.length){ chars[i].classList.add(state.typed[i]===state.promptStream[i]?'correct':'incorrect'); } } }
+function focusTyping(){ hiddenInput.focus(); }
+['click','focus'].forEach(ev=>{ typedEl.addEventListener(ev, focusTyping); });
 
-function startRun(){ buildInitialStream(); state.running=true; state.typed=""; state.startTime=Date.now(); renderPrompt(); renderTyping(); startTicker(); focus(); }
-function resetRun(){ state.running=false; state.typed=""; state.promptStream=""; renderPrompt(); renderTyping(); }
+// Lock/unlock selectors during a running test
+function setSelectorsLocked(locked){
+  durationSel.disabled = !!locked;
+}
 
-function elapsedSeconds(){ return Math.floor((Date.now()-state.startTime)/1000); }
-function computeStats(){ let correct=0; for(let i=0;i<state.typed.length;i++){ if(state.typed[i]===state.promptStream[i]) correct++; } const minutes = Math.max(0.001, elapsedSeconds()/60); return {wpm:Math.round(correct/5/minutes), acc:state.typed.length?Math.round(correct/state.typed.length*100):100, minutes:Number(minutes.toFixed(2))}; }
+// Key handling (Backspace + pause)
+hiddenInput.addEventListener('keydown', (e)=>{
+  if(!state.running) return;
+  if(e.key==='Escape'){
+    togglePause();
+    e.preventDefault();
+    return;
+  }
+  if(e.key==='Backspace'){
+    if(!allowBackspaceEl.checked){
+      e.preventDefault();
+      return;
+    }
+    state.typed = state.typed.slice(0,-1);
+    state.lastKeyTs=Date.now();
+    renderTyping();
+    updateStats();
+    e.preventDefault();
+    return;
+  }
+  state.lastKeyTs=Date.now();
+});
 
-function finishRun(){ const s = computeStats(); saveAttempt({duration:state.durationMin,wpm:s.wpm,acc:s.acc,minutes:s.minutes,date:new Date().toISOString()}); renderProgress(); state.running=false; }
+hiddenInput.addEventListener('input', ()=>{
+  if(!state.running||state.paused) return;
+  state.lastKeyTs=Date.now();
+  const v = hiddenInput.value;
+  hiddenInput.value='';
+  if(v){
+    const ch = v[v.length-1];
+    if(ch==='\n' || ch==='\r') return;
+    state.typed += ch;
+    if(state.typed.length > state.promptStream.length-100){
+      extendPromptStream();
+      renderPrompt();
+    }
+    renderTyping();
+    updateStats();
+  }
+});
+
+// Idle pause watcher
+setInterval(()=>{
+  if(state.running && !state.paused){
+    const now=Date.now();
+    if(now - state.lastKeyTs > state.idleCutoffMs){
+      state.startTime += (now - state.lastKeyTs);
+      state.lastKeyTs = now;
+      showMsg('Idle paused. Resume typing to continue.', 'warn');
+    }
+  }
+}, 1000);
+
+// Build/extend prompt stream with rotation seed
+function extendPromptStream(){
+  const pool = SCRIPTS;
+  if(pool.length===0){ state.promptStream += " "; return; }
+  const next = pool[(Math.floor(Math.random()*pool.length))];
+  state.promptStream += (state.promptStream?" ":"") + next;
+}
+
+function buildInitialStream(){
+  state.promptStream = "";
+  const idx = nextScriptIndex();
+  const seed = SCRIPTS[idx] || "";
+  state.promptStream = seed;
+  while(state.promptStream.length < 3000){ extendPromptStream(); }
+}
+
+// Rendering
+function renderPrompt(){
+  promptEl.textContent='';
+  const frag=document.createDocumentFragment();
+  for(const c of state.promptStream){
+    const span=document.createElement('span'); span.textContent=c; span.className='char';
+    frag.appendChild(span);
+  }
+  promptEl.appendChild(frag);
+}
+
+function renderTyping(){
+  typedEl.textContent = state.typed;
+  const p = state.promptStream;
+  const promptNodes = promptEl.children;
+  const total = promptNodes.length;
+  const tlen = state.typed.length;
+  for(let i=0;i<total;i++){
+    const node = promptNodes[i];
+    if(!node) continue;
+    if(i < tlen){
+      const isCorrect = p[i]===state.typed[i];
+      node.classList.toggle('correct', isCorrect);
+      node.classList.toggle('incorrect', !isCorrect);
+    } else {
+      node.classList.remove('correct','incorrect');
+    }
+  }
+}
+
+function elapsedSeconds(){
+  if(!state.running) return 0;
+  const now=Date.now();
+  const ms = now - state.startTime;
+  return Math.max(0, Math.floor(ms/1000));
+}
+
+function updateTimeLeft(secondsLeft){
+  const m = Math.floor(secondsLeft/60);
+  const s = (secondsLeft%60).toString().padStart(2,'0');
+  el('time').textContent = `${m}:${s}`;
+}
+
+function computeStats(){
+  const p = state.promptStream;
+  const t = state.typed;
+  const typedLen = t.length;
+  let correct=0;
+  for(let i=0;i<typedLen;i++) if(p[i]===t[i]) correct++;
+  const minutes = Math.max(0.001, (elapsedSeconds()/60));
+  const wpm = Math.max(0, Math.round(((correct)/5) / minutes));
+  const acc = typedLen>0 ? Math.round((correct/typedLen)*100) : 100; // % correct of typed only
+  return {wpm, acc, minutes: Number(minutes.toFixed(2))};
+}
+
+function updateStats(clear){
+  if(clear){ el('wpm').textContent='0'; el('acc').textContent='100%'; return; }
+  const {wpm, acc} = computeStats();
+  el('wpm').textContent = String(wpm);
+  el('acc').textContent = `${acc}%`;
+}
+
+function startTicker(){
+  stopTicker();
+  state.ticker = setInterval(()=>{
+    const elapsed = elapsedSeconds();
+    const durationSec = state.durationMin*60;
+    const left = Math.max(0, durationSec - elapsed);
+    updateTimeLeft(left);
+    if(left<=0){ finishRun(); }
+  }, 250);
+}
+
+function stopTicker(){ if(state.ticker){ clearInterval(state.ticker); state.ticker=null; } }
+
+// Start/Reset
+el('startBtn').addEventListener('click', startRun);
+function startRun(){
+  buildInitialStream();
+  state.running=true; state.paused=false; state.typed='';
+  state.startTime=Date.now(); state.lastKeyTs=Date.now();
+  state.attemptId = (crypto&&crypto.randomUUID)?crypto.randomUUID():String(Date.now());
+  setSelectorsLocked(true);
+  renderPrompt(); renderTyping(); showMsg(`Timed test: ${state.durationMin} minute${state.durationMin>1?'s':''}.`, '');
+  updateStats(); updateTimeLeft(state.durationMin*60); focusTyping(); startTicker();
+}
+
+el('resetBtn').addEventListener('click', resetRun);
+function resetRun(){
+  stopTicker();
+  state.running=false; state.paused=false; state.typed=''; state.promptStream='';
+  setSelectorsLocked(false);
+  renderPrompt(); renderTyping(); updateStats(true); showMsg('Reset.');
+}
+
+// Duration change
+durationSel.addEventListener('change', e=>{
+  state.durationMin = parseInt(e.target.value,10);
+  resetRun();
+  updateTimeLeft( state.durationMin*60 );
+});
+
+function togglePause(){
+  if(!state.running) return;
+  state.paused = !state.paused;
+  if(state.paused){ showMsg('Paused. Press Esc or click typing area to resume.', 'warn'); stopTicker(); }
+  else { state.lastKeyTs=Date.now(); showMsg('Resumed.'); focusTyping(); startTicker(); }
+}
+
+function finishRun(){
+  stopTicker();
+  const {wpm, acc, minutes} = computeStats();
+  state.running=false; state.paused=false;
+  setSelectorsLocked(false);
+  saveAttempt({id:state.attemptId,module:'Legal Studies Typing',wpm,acc,minutes,date:new Date().toISOString(),duration:state.durationMin});
+  renderProgress();
+  const hitWpm = wpm>=GOAL_WPM; const hitAcc = acc>=GOAL_ACC;
+  showMsg(hitWpm && hitAcc ? `Nice! Goal met (≥${GOAL_WPM} WPM & ≥${GOAL_ACC}% acc).` : `Run saved.`, hitWpm&&hitAcc?'kudos':'');
+}
+
+// Storage & progress (session-only)
+function getAttempts(){ return sessionAttempts; }
 function saveAttempt(a){ sessionAttempts.push(a); el('attempts').textContent=sessionAttempts.length; }
 
-function renderProgress(){ const tbody=document.querySelector('#progressTable tbody'); tbody.innerHTML=""; const one=best3(1),three=best3(3); tbody.innerHTML = `<tr><td>Legal Studies Typing</td><td>${one}</td><td>${three}</td></tr>`; }
-function best3(d){ const arr=sessionAttempts.filter(a=>a.duration===d).sort((a,b)=>b.wpm-a.wpm).slice(0,3); if(arr.length===0) return "0 WPM • 0% • 0 attempts"; return `${Math.round(arr.reduce((s,x)=>s+x.wpm,0)/arr.length)} WPM • ${Math.round(arr.reduce((s,x)=>s+x.acc,0)/arr.length)}% • ${arr.length} attempts`; }
+function best3Avg(arr){
+  const top3 = [...arr].sort((a,b)=> (b.acc-a.acc) || (b.wpm-a.wpm)).slice(0,3);
+  if(top3.length===0) return {wpm:0, acc:0, n:0};
+  const wpm = Math.round(top3.reduce((s,x)=>s+x.wpm,0)/top3.length);
+  const acc = Math.round(top3.reduce((s,x)=>s+x.acc,0)/top3.length);
+  return {wpm, acc, n:top3.length};
+}
 
-function startTicker(){ state.ticker=setInterval(()=>{ const left=state.durationMin*60 - elapsedSeconds(); el('time').textContent = `${Math.floor(left/60)}:${String(left%60).padStart(2,'0')}`; if(left<=0){ clearInterval(state.ticker); finishRun(); } },250); }
+function best3AvgForDuration(arr, duration){
+  return best3Avg(arr.filter(a=>a.duration===duration));
+}
 
-el('startBtn').onclick=startRun;
-el('resetBtn').onclick=resetRun;
+function renderProgress(){
+  const tbody = document.querySelector('#progressTable tbody');
+  tbody.innerHTML='';
+  const attempts = getAttempts();
+  const one = best3AvgForDuration(attempts, 1);
+  const three = best3AvgForDuration(attempts, 3);
+  const tr=document.createElement('tr');
+  tr.innerHTML = `<td>Legal Studies Typing</td>
+    <td>${one.wpm} WPM ${one.wpm>=GOAL_WPM&&one.n? '✅':''} • ${one.acc}% ${one.acc>=GOAL_ACC&&one.n? '✅':''} • ${attempts.filter(x=>x.duration===1).length} attempts</td>
+    <td>${three.wpm} WPM ${three.wpm>=GOAL_WPM&&three.n? '✅':''} • ${three.acc}% ${three.acc>=GOAL_ACC&&three.n? '✅':''} • ${attempts.filter(x=>x.duration===3).length} attempts</td>`;
+  tbody.appendChild(tr);
+  el('attempts').textContent = attempts.length;
+}
 
-hiddenInput.addEventListener('input', e=>{ if(!state.running)return; const v=e.target.value; e.target.value=""; if(v){ state.typed+=v.slice(-1); renderTyping(); }});
+// --- Reporting helpers ---
+function buildReportHTML(now, attempts, studentName, selectedLabel){
+  const safeName = (studentName||'').replace(/[<>]/g,'');
+  const rows = attempts.map(a=>`<tr><td>${a.duration} min</td><td>${a.wpm}</td><td>${a.acc}%</td><td>${a.minutes}</td><td>${new Date(a.date).toLocaleString()}</td></tr>`).join('');
+  const one = best3AvgForDuration(attempts,1); const three = best3AvgForDuration(attempts,3);
+  const prog = `<tr><td>${selectedLabel}</td><td>${one.wpm} WPM • ${one.acc}%</td><td>${three.wpm} WPM • ${three.acc}%</td><td>${attempts.length}</td></tr>`;
+  return `<!doctype html><html><head><meta charset="utf-8"><title>NCC Typing Report</title>
+    <style>body{font:14px system-ui,Segoe UI,Roboto,Arial} h1{font-size:18px;margin:0 0 8px} table{width:100%;border-collapse:collapse;margin-top:10px} th,td{border:1px solid #ccc;padding:6px;text-align:left} .muted{color:#666} .small{font-size:12px}</style>
+  </head><body onload="window.print()">
+    <h1>Legal Studies Typing Report</h1>
+    <div class='muted small'>Generated: ${now}</div>
+    <div><strong>Student:</strong> ${safeName||'<em>(not provided)</em>'}</div>
+    <div><strong>Practice:</strong> ${selectedLabel}</div>
+    <p>This report shows your timed attempts (1 or 3 minutes) and the averages of your best three runs.</p>
+    <h2>Practice Averages (Best-3, by duration)</h2>
+    <table><thead><tr><th>Practice</th><th>1-Minute (Avg WPM • Avg Acc)</th><th>3-Minute (Avg WPM • Avg Acc)</th><th>Total Attempts</th></tr></thead><tbody>${prog}</tbody></table>
+    <h2>Attempts</h2>
+    <table><thead><tr><th>Duration</th><th>WPM</th><th>Accuracy</th><th>Minutes</th><th>Date</th></tr></thead><tbody>${rows||'<tr><td colspan="5">No attempts yet.</td></tr>'}</tbody></table>
+  </body></html>`;
+}
 
-function focus(){ hiddenInput.focus(); typedEl.onclick=focus; }
+// Report (print-ready)
+el('reportBtn').addEventListener('click', ()=>{
+  const attempts = getAttempts();
+  const now = new Date().toLocaleString();
+  const html = buildReportHTML(now, attempts, studentNameEl.value.trim(), 'Legal Studies Typing');
+  const win = window.open('', '_blank');
+  if(!win){
+    const blob = new Blob([html], {type:'text/html'});
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url; link.download='ncc_legal_typing_report.html'; link.click();
+    URL.revokeObjectURL(url);
+    return;
+  }
+  win.document.open();
+  win.document.write(html);
+  win.document.close();
+});
 
-renderPrompt(); renderProgress();
+function showMsg(t,cls){ msgEl.className = cls?cls+' muted': 'muted'; msgEl.textContent=t; }
+
+// Initialize
+(function init(){
+  if(corrStateEl){
+    corrStateEl.textContent = allowBackspaceEl.checked? 'Allowed':'Not allowed';
+  }
+  state.durationMin = parseInt(durationSel.value,10) || 3;
+  setSelectorsLocked(false);
+  renderProgress();
+  renderPrompt();
+  renderTyping();
+  updateTimeLeft(state.durationMin*60);
+})();
 </script>
 </body>
 </html>
