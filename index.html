@@ -1,0 +1,188 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Legal Studies Typing Practice (NCC)</title>
+  <style>
+    :root{
+      --ncc-purple:#6c4ba5;
+      --ncc-teal:#1aa3ad;
+      --bg:#f8fafc;
+      --surface:#ffffff;
+      --ink:#1f2937;
+      --muted:#6b7280;
+      --border:#e5e7eb;
+      --ink-contrast:#ffffff;
+      --ok:#16a34a;
+      --warn:#f59e0b;
+      --err:#ef4444;
+      --shadow:0 10px 20px rgba(17,24,39,.08);
+      --ring:0 0 0 3px rgba(26,163,173,.25);
+    }
+
+    body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 system-ui}
+    .wrap{max-width:1200px;margin:0 auto;padding:20px}
+
+    header{display:flex;justify-content:space-between;align-items:center;background:linear-gradient(135deg,var(--ncc-purple),var(--ncc-teal));padding:14px 16px;border-radius:16px;color:#fff;box-shadow:var(--shadow)}
+
+    h1{margin:0;font-size:1.25rem;color:#fff}
+
+    .grid{display:grid;grid-template-columns:320px 1fr;gap:16px;margin-top:16px}
+    .card{background:var(--surface);border:1px solid var(--border);padding:16px;border-radius:14px;box-shadow:var(--shadow)}
+
+    label{display:block;color:var(--muted);font-size:.9rem;margin-bottom:4px;margin-top:10px}
+    input,select,button{width:100%;padding:10px 12px;border-radius:10px;border:1px solid var(--border);background:var(--surface);box-sizing:border-box;color:var(--ink)}
+
+    button.primary{background:linear-gradient(135deg,var(--ncc-purple),var(--ncc-teal));border:0;color:#fff;cursor:pointer}
+    button.ghost{background:transparent;border:1px solid var(--ncc-teal);color:var(--ncc-teal);cursor:pointer}
+
+    .prompt,.typed{min-height:160px;max-height:220px;overflow:auto;padding:12px;border-radius:12px}
+    .prompt{border:1px solid var(--border);background:var(--surface)}
+    .typed{border:1px dashed var(--border);background:var(--surface)}
+
+    .char.correct{color:var(--ok)}
+    .char.incorrect{color:var(--err);border-bottom:2px solid var(--err)}
+
+    .stats{display:flex;gap:12px;flex-wrap:wrap;margin-top:12px}
+    .stat{border:1px solid var(--border);padding:10px;border-radius:12px;min-width:120px;text-align:center;background:var(--surface)}
+    .stat small{font-size:.75rem;color:var(--muted)}
+
+    @media(max-width:900px){.grid{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>NCC • Legal Studies Typing Practice</h1>
+  </header>
+
+  <div class="grid">
+    <aside class="card">
+      <label for="studentName">Student name</label>
+      <input id="studentName" type="text" placeholder="First Last" />
+
+      <label for="duration">Test duration</label>
+      <select id="duration">
+        <option value="1">1 minute</option>
+        <option value="3" selected>3 minutes</option>
+      </select>
+
+      <div style="margin:8px 0">
+        <input id="allowBackspace" type="checkbox" checked />
+        <label for="allowBackspace">Allow corrections (Backspace)</label>
+      </div>
+
+      <button id="startBtn" class="primary">Start</button>
+      <button id="resetBtn" class="ghost" style="margin-top:6px">Reset</button>
+
+      <div class="stats">
+        <div class="stat"><small>Time Left</small><div id="time">3:00</div></div>
+        <div class="stat"><small>WPM</small><div id="wpm">0</div></div>
+        <div class="stat"><small>Accuracy</small><div id="acc">100%</div></div>
+        <div class="stat"><small>Attempts</small><div id="attempts">0</div></div>
+      </div>
+
+      <button id="reportBtn" class="ghost" style="margin-top:12px">Generate Report (Print/PDF)</button>
+    </aside>
+
+    <main class="card">
+      <div id="msg" style="color:var(--muted);min-height:20px"></div>
+
+      <label>Prompt</label>
+      <div id="prompt" class="prompt"></div>
+
+      <label>Type here</label>
+      <div id="typed" class="typed" tabindex="0"></div>
+      <input id="hiddenInput" type="text" style="position:absolute;left:-9999px" autocomplete="off" />
+
+      <section class="card" style="margin-top:16px">
+        <h2 style="margin:0 0 8px;font-size:1rem">Practice Progress (Best‑3 averages)</h2>
+        <table style="width:100%;border-collapse:collapse" id="progressTable">
+          <thead>
+            <tr>
+              <th>Practice</th>
+              <th>1‑Minute</th>
+              <th>3‑Minute</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </section>
+    </main>
+  </div>
+</div>
+
+<script>
+// ----------------------
+// LEGAL STUDIES TYPING PROMPTS
+// ----------------------
+const SCRIPTS = [
+  "A legal assistant supports attorneys by preparing documents, organizing case files, and maintaining communication with clients and courts.",
+  "Confidentiality is essential in legal settings; information shared by a client must not be disclosed without authorization.",
+  "Accurate record‑keeping ensures compliance with deadlines, court rules, and proper filing procedures.",
+  "A subpoena is a formal document that orders a person to appear in court or produce requested documents.",
+  "Legal research involves locating statutes, case law, and administrative regulations relevant to a client’s issue.",
+  "Professional communication requires clear, concise writing free of ambiguity, bias, or unnecessary commentary.",
+  "Proofreading legal documents prevents errors that could impact a case, delay proceedings, or create liability.",
+  "Client intake forms gather essential information, including contact details, case background, and conflict‑check data.",
+  "Calendaring systems track deadlines such as hearings, discovery cutoffs, statutes of limitation, and filing dates.",
+  "A retainer agreement outlines the scope of representation, fee structure, and responsibilities of both attorney and client.",
+  "Discovery may include interrogatories, depositions, and requests for production of documents.",
+  "Proper citation format allows courts and attorneys to verify sources and evaluate the authority of legal arguments.",
+  "Legal assistants must understand court hierarchy to determine which decisions are binding or persuasive authority.",
+  "E‑filing portals require correct document naming, formatting, and adherence to jurisdiction‑specific rules.",
+  "Maintaining professionalism includes punctuality, confidentiality, and respectful communication with all parties.",
+  "Timekeeping entries must be accurate and detailed, documenting tasks completed and time spent on each activity.",
+  "Litigation support often involves organizing exhibits, preparing trial binders, and managing document production.",
+  "Client correspondence should summarize key updates, next steps, and any required responses or documents.",
+  "Understanding legal terminology ensures accurate document preparation and effective communication with attorneys.",
+  "Ethical rules prohibit giving legal advice unless one is a licensed attorney; legal assistants may provide information but not counsel."
+];
+
+const GOAL_WPM = 45;
+const GOAL_ACC = 95;
+
+let state = {running:false,paused:false,startTime:0,lastKeyTs:0,idleCutoffMs:5000,durationMin:3,promptStream:"",typed:"",scriptIndex:-1,ticker:null};
+let sessionAttempts = [];
+
+const el = id => document.getElementById(id);
+const durationSel = el('duration');
+const allowBackspace = el('allowBackspace');
+const promptEl = el('prompt');
+const typedEl = el('typed');
+const hiddenInput = el('hiddenInput');
+
+function nextScriptIndex(){ state.scriptIndex = (state.scriptIndex + 1) % SCRIPTS.length; return state.scriptIndex; }
+
+function buildInitialStream(){ state.promptStream = SCRIPTS[nextScriptIndex()]; while(state.promptStream.length < 3000){ extendPromptStream(); } }
+function extendPromptStream(){ state.promptStream += " " + SCRIPTS[Math.floor(Math.random()*SCRIPTS.length)]; }
+
+function renderPrompt(){ promptEl.innerHTML = state.promptStream.split('').map(c=>`<span class='char'>${c}</span>`).join(''); }
+function renderTyping(){ typedEl.textContent = state.typed; const chars = promptEl.children; for(let i=0;i<chars.length;i++){ chars[i].classList.remove('correct','incorrect'); if(i < state.typed.length){ chars[i].classList.add(state.typed[i]===state.promptStream[i]?'correct':'incorrect'); } } }
+
+function startRun(){ buildInitialStream(); state.running=true; state.typed=""; state.startTime=Date.now(); renderPrompt(); renderTyping(); startTicker(); focus(); }
+function resetRun(){ state.running=false; state.typed=""; state.promptStream=""; renderPrompt(); renderTyping(); }
+
+function elapsedSeconds(){ return Math.floor((Date.now()-state.startTime)/1000); }
+function computeStats(){ let correct=0; for(let i=0;i<state.typed.length;i++){ if(state.typed[i]===state.promptStream[i]) correct++; } const minutes = Math.max(0.001, elapsedSeconds()/60); return {wpm:Math.round(correct/5/minutes), acc:state.typed.length?Math.round(correct/state.typed.length*100):100, minutes:Number(minutes.toFixed(2))}; }
+
+function finishRun(){ const s = computeStats(); saveAttempt({duration:state.durationMin,wpm:s.wpm,acc:s.acc,minutes:s.minutes,date:new Date().toISOString()}); renderProgress(); state.running=false; }
+function saveAttempt(a){ sessionAttempts.push(a); el('attempts').textContent=sessionAttempts.length; }
+
+function renderProgress(){ const tbody=document.querySelector('#progressTable tbody'); tbody.innerHTML=""; const one=best3(1),three=best3(3); tbody.innerHTML = `<tr><td>Legal Studies Typing</td><td>${one}</td><td>${three}</td></tr>`; }
+function best3(d){ const arr=sessionAttempts.filter(a=>a.duration===d).sort((a,b)=>b.wpm-a.wpm).slice(0,3); if(arr.length===0) return "0 WPM • 0% • 0 attempts"; return `${Math.round(arr.reduce((s,x)=>s+x.wpm,0)/arr.length)} WPM • ${Math.round(arr.reduce((s,x)=>s+x.acc,0)/arr.length)}% • ${arr.length} attempts`; }
+
+function startTicker(){ state.ticker=setInterval(()=>{ const left=state.durationMin*60 - elapsedSeconds(); el('time').textContent = `${Math.floor(left/60)}:${String(left%60).padStart(2,'0')}`; if(left<=0){ clearInterval(state.ticker); finishRun(); } },250); }
+
+el('startBtn').onclick=startRun;
+el('resetBtn').onclick=resetRun;
+
+hiddenInput.addEventListener('input', e=>{ if(!state.running)return; const v=e.target.value; e.target.value=""; if(v){ state.typed+=v.slice(-1); renderTyping(); }});
+
+function focus(){ hiddenInput.focus(); typedEl.onclick=focus; }
+
+renderPrompt(); renderProgress();
+</script>
+</body>
+</html>
